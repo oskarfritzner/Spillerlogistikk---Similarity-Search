@@ -27,13 +27,25 @@ python3 test_player_stats.py
 
 Dette analyserer bare 5 kamper og tar ~2 minutter.
 
-### 3. Generer full spillerstatistikk
+### 3. Generer full spillerstatistikk (SMART versjon)
 
 ```bash
 python3 generate_player_stats.py
 ```
 
-⚠️ **Advarsel**: Dette tar 20-30 minutter og henter data fra alle 380 kamper!
+🧠 **Smart funksjon**: Scriptet vil først søke etter eksisterende eventdata og tilby å bruke dem (sparer 20-30 minutter!). Hvis ingen finnes, henter det ny data fra API.
+
+### 🚀 Anbefalt arbeidsflyt:
+
+```bash
+# Steg 1: Hent rådata først (gjør dette én gang, 20-30 min)
+python3 fetch_all_pl_2015_2016_data.py
+
+# Steg 2: Generer spillerstatistikk (bruker eksisterende data, 2-3 min!)
+python3 generate_player_stats.py
+```
+
+**Resultat**: Total tid redusert fra 40-60 minutter til 20-35 minutter! 🎉
 
 ## 📊 Hva får du?
 

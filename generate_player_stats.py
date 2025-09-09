@@ -12,6 +12,7 @@ import numpy as np
 from statsbombpy import sb
 import os
 import time
+import glob
 from datetime import datetime
 import warnings
 warnings.filterwarnings('ignore')
@@ -22,6 +23,137 @@ def create_data_directory():
     if not os.path.exists('data'):
         os.makedirs('data')
         print("Opprettet 'data' mappe")
+
+
+def find_existing_events_data():
+    """
+    Søk etter eksisterende eventdata i data-mappen
+    
+    Returns:
+        str or None: Filnavn til eksisterende eventdata, eller None hvis ikke funnet
+    """
+    # Søk etter filer som matcher mønsteret for eventdata
+    patterns = [
+        'data/pl_2015_2016_all_events_*.csv',
+        'data/*all_events*.csv', 
+        'data/*events*.csv'
+    ]
+    
+    found_files = []
+    for pattern in patterns:
+        found_files.extend(glob.glob(pattern))
+    
+    # Filtrer bort små testfiler
+    large_files = []
+    for file in found_files:
+        try:
+            file_size = os.path.getsize(file) / (1024 * 1024)  # MB
+            if file_size > 10:  # Kun filer større enn 10MB (fullstendige datasett)
+                large_files.append((file, file_size))
+        except:
+            continue
+    
+    if large_files:
+        # Sorter etter filstørrelse (størst først, mest komplett)
+        large_files.sort(key=lambda x: x[1], reverse=True)
+        return large_files[0][0]  # Returner filnavn
+    
+    return None
+
+
+def load_existing_events_data(filename):
+    """
+    Last inn eksisterende eventdata fra CSV-fil
+    
+    Args:
+        filename (str): Filnavn til eventdata
+        
+    Returns:
+        pd.DataFrame or None: DataFrame med events, eller None hvis lasting feiler
+    """
+    try:
+        print(f"Laster inn eksisterende eventdata fra: {filename}")
+        
+        # Sjekk om filen er komprimert
+        if filename.endswith('.gz'):
+            events_df = pd.read_csv(filename, compression='gzip')
+        else:
+            events_df = pd.read_csv(filename)
+        
+        print(f"✓ Lastet inn {len(events_df):,} events fra eksisterende fil")
+        
+        # Valider at dataene ser riktige ut
+        required_columns = ['player', 'team', 'type', 'match_id']
+        missing_columns = [col for col in required_columns if col not in events_df.columns]
+        
+        if missing_columns:
+            print(f"⚠️ Advarsel: Mangler kolonner {missing_columns} i eksisterende data")
+            return None
+        
+        # Sjekk at vi har data fra mange kamper (ikke bare testdata)
+        unique_matches = events_df['match_id'].nunique()
+        if unique_matches < 50:  # Mindre enn 50 kamper = sannsynligvis testdata
+            print(f"⚠️ Filen inneholder kun {unique_matches} kamper. Trenger fullstendig datasett.")
+            return None
+        
+        print(f"✓ Validert: {unique_matches} kamper i datasettet")
+        return events_df
+        
+    except Exception as e:
+        print(f"❌ Feil ved lasting av eksisterende data: {e}")
+        return None
+
+
+def get_events_data(use_existing=True):
+    """
+    Hent eventdata - enten fra eksisterende fil eller fra API
+    
+    Args:
+        use_existing (bool): Om vi skal prøve å bruke eksisterende data først
+        
+    Returns:
+        pd.DataFrame: DataFrame med alle events
+    """
+    events_df = None
+    
+    if use_existing:
+        # Prøv å finne eksisterende data
+        existing_file = find_existing_events_data()
+        
+        if existing_file:
+            print(f"🔍 Fant eksisterende eventdata: {existing_file}")
+            
+            # Vis informasjon om filen
+            file_size = os.path.getsize(existing_file) / (1024 * 1024)  # MB
+            file_age = datetime.fromtimestamp(os.path.getmtime(existing_file))
+            
+            print(f"📁 Filstørrelse: {file_size:.1f} MB")
+            print(f"📅 Sist modifisert: {file_age}")
+            
+            use_file = input("💾 Vil du bruke denne eksisterende datafilen? Dette sparer 20-30 minutter! (y/n): ").lower().strip()
+            
+            if use_file in ['y', 'yes', 'ja', 'j']:
+                events_df = load_existing_events_data(existing_file)
+                
+                if events_df is not None:
+                    print("✅ Bruker eksisterende data - sparer mye tid!")
+                    return events_df
+                else:
+                    print("⚠️ Kunne ikke laste eksisterende data. Henter fra API i stedet...")
+            else:
+                print("🌐 Henter ny data fra API...")
+        else:
+            print("🔍 Ingen eksisterende fullstendig eventdata funnet.")
+            print("💡 Tips: Kjør først 'fetch_all_pl_2015_2016_data.py' for å laste ned all rådata")
+            
+            download_first = input("🌐 Vil du hente rådata nå? (y/n): ").lower().strip()
+            if download_first not in ['y', 'yes', 'ja', 'j']:
+                print("❌ Kan ikke fortsette uten eventdata.")
+                return None
+    
+    # Hvis vi kommer hit, må vi hente fra API
+    events_df = fetch_all_events_for_season()
+    return events_df
 
 
 def fetch_all_events_for_season():
@@ -474,15 +606,17 @@ def print_statistics_summary(stats_df):
 
 def main():
     """Hovedfunksjon som kjører hele prosessen"""
-    print("🏈 PREMIER LEAGUE 2015/2016 SPILLERSTATISTIKK GENERATOR")
+    print("🏈 SMART PREMIER LEAGUE 2015/2016 SPILLERSTATISTIKK GENERATOR")
     print("="*60)
     
     # Opprett data-mappe
     create_data_directory()
     
     # Spør bruker om de vil fortsette
-    print("Dette scriptet vil hente eventdata for alle kamper og beregne spillerstatistikk.")
-    print("Prosessen kan ta 20-30 minutter avhengig av internettforbindelse.")
+    print("Dette scriptet kan:")
+    print("1. Bruke eksisterende eventdata (hvis tilgjengelig) - RASK!")
+    print("2. Eller hente ny data fra StatsBomb API - tar 20-30 minutter")
+    print("3. Beregne omfattende spillerstatistikk")
     
     user_input = input("\nVil du fortsette? (y/n): ").lower().strip()
     
@@ -490,9 +624,9 @@ def main():
         print("Avbryter.")
         return
     
-    # Hent alle events
-    print("\n1. HENTER EVENTDATA...")
-    all_events = fetch_all_events_for_season()
+    # Hent eventdata (eksisterende eller ny)
+    print("\n1. HENTER/LASTER EVENTDATA...")
+    all_events = get_events_data(use_existing=True)
     
     if all_events is None:
         print("❌ Kunne ikke hente eventdata. Avbryter.")
