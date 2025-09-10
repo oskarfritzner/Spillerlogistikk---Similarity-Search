@@ -1,0 +1,17 @@
+# Lag .gitignore fil først
+echo "# Store datafiler (over GitHub's 100MB grense)
+data/pl_2015_2016_all_events_*.csv
+data/pl_2015_2016_all_events_*.csv.gz
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE filer
+.vscode/
+.idea/
+
+# OS filer
+.DS_Store
+Thumbs.db" > .gitignore
