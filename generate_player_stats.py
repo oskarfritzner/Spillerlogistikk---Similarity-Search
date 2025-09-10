@@ -326,12 +326,12 @@ def calculate_player_statistics(events_df):
         event_type = event['type']
         
         # Posisjondata
-        if pd.notna(event.get('location')):
+        location = event.get('location')
+        if isinstance(location, list) and len(location) >= 2:
             try:
-                if isinstance(event['location'], list) and len(event['location']) >= 2:
-                    x, y = event['location'][0], event['location'][1]
-                    player_stats[player_name]['avg_position_x'].append(x)
-                    player_stats[player_name]['avg_position_y'].append(y)
+                x, y = location[0], location[1]
+                player_stats[player_name]['avg_position_x'].append(x)
+                player_stats[player_name]['avg_position_y'].append(y)
             except:
                 pass
         
