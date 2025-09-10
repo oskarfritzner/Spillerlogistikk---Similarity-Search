@@ -1,5 +1,4 @@
-# Lag .gitignore fil først
-echo "# Store datafiler (over GitHub's 100MB grense)
+# Store datafiler (over GitHub's 100MB grense)
 data/pl_2015_2016_all_events_*.csv
 data/pl_2015_2016_all_events_*.csv.gz
 
@@ -14,4 +13,4 @@ __pycache__/
 
 # OS filer
 .DS_Store
-Thumbs.db" > .gitignore
+Thumbs.db
