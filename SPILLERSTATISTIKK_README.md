@@ -1,220 +1,220 @@
-# Premier League 2015/2016 Spillerstatistikk
+# Premier League 2015/2016 Player Statistics
 
-Dette prosjektet inneholder script for å hente og analysere spillerstatistikk fra Premier League sesongen 2015/2016 ved hjelp av StatsBomb sitt åpne datasett.
+This project contains scripts to fetch and analyze player statistics from the Premier League 2015/2016 season using StatsBomb's open dataset.
 
-## 📋 Oversikt
+## 📋 Overview
 
-### Script tilgjengelig:
+### Available Scripts:
 
-1. **`generate_player_stats.py`** - Hovedscript som henter alle data og genererer omfattende spillerstatistikk
-2. **`test_player_stats.py`** - Testscript som analyserer bare noen få kamper for rask testing
-3. **`fetch_all_pl_2015_2016_data.py`** - Henter all rådata (events) fra alle kamper
-4. **`quick_fetch_example.py`** - Enkelt eksempel for å teste API-tilgang
+1. **`generate_player_stats.py`** - Main script that fetches all data and generates comprehensive player statistics
+2. **`test_player_stats.py`** - Test script that analyzes only a few matches for quick testing
+3. **`fetch_all_pl_2015_2016_data.py`** - Fetches all raw data (events) from all matches
+4. **`quick_fetch_example.py`** - Simple example to test API access
 
-## 🚀 Hvordan bruke
+## 🚀 How to Use
 
-### 1. Installér avhengigheter
+### 1. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Test at alt fungerer
+### 2. Test that everything works
 
 ```bash
 python3 test_player_stats.py
 ```
 
-Dette analyserer bare 5 kamper og tar ~2 minutter.
+This analyzes only 5 matches and takes ~2 minutes.
 
-### 3. Generer full spillerstatistikk (SMART versjon)
+### 3. Generate full player statistics (SMART version)
 
 ```bash
 python3 generate_player_stats.py
 ```
 
-🧠 **Smart funksjon**: Scriptet vil først søke etter eksisterende eventdata og tilby å bruke dem (sparer 20-30 minutter!). Hvis ingen finnes, henter det ny data fra API.
+🧠 **Smart feature**: The script will first search for existing event data and offer to use it (saves 20-30 minutes!). If none is found, it fetches new data from the API.
 
-### 🚀 Anbefalt arbeidsflyt:
+### 🚀 Recommended workflow:
 
 ```bash
-# Steg 1: Hent rådata først (gjør dette én gang, 20-30 min)
+# Step 1: Fetch raw data first (do this once, 20-30 min)
 python3 fetch_all_pl_2015_2016_data.py
 
-# Steg 2: Generer spillerstatistikk (bruker eksisterende data, 2-3 min!)
+# Step 2: Generate player statistics (uses existing data, 2-3 min!)
 python3 generate_player_stats.py
 ```
 
-**Resultat**: Total tid redusert fra 40-60 minutter til 20-35 minutter! 🎉
+**Result**: Total time reduced from 40-60 minutes to 20-35 minutes! 🎉
 
-## 📊 Hva får du?
+## 📊 What do you get?
 
-### Utdatafiler:
+### Output files:
 
-- `pl_2015_2016_player_stats_full_[timestamp].csv` - Komplett statistikk med alle detaljer
-- `pl_2015_2016_player_stats_simple_[timestamp].csv` - Forenklet oversikt med hovedstatistikk
-- `pl_2015_2016_top_scorers_[timestamp].csv` - Top 20 målscorere
+- `pl_2015_2016_player_stats_full_[timestamp].csv` - Complete statistics with all details
+- `pl_2015_2016_player_stats_simple_[timestamp].csv` - Simplified overview with main statistics
+- `pl_2015_2016_top_scorers_[timestamp].csv` - Top 20 goal scorers
 
-### Statistikker inkludert:
+### Statistics included:
 
-#### ⚽ Angrepsstatistikk
+#### ⚽ Attacking Statistics
 
-- Mål scoret
-- Skudd (totalt, på mål, utenfor, blokkert)
+- Goals scored
+- Shots (total, on target, off target, blocked)
 - Expected Goals (xG)
-- Assists og nøkkelpasninger
-- Hodestøt
+- Assists and key passes
+- Headers
 
-#### 🎯 Pasningsstatistikk
+#### 🎯 Passing Statistics
 
-- Pasninger forsøkt/fullført
-- Pasningsprosent
-- Korte/mellom/lange pasninger
-- Fremover/bakover/sideveis pasninger
-- Innlegg
+- Passes attempted/completed
+- Pass completion percentage
+- Short/medium/long passes
+- Forward/backward/sideways passes
+- Crosses
 
-#### 🏃‍♂️ Driblingsstatistikk
+#### 🏃‍♂️ Dribbling Statistics
 
-- Driblinger forsøkt/fullført
-- Driblingsprosentprosent
+- Dribbles attempted/completed
+- Dribbling success percentage
 
-#### 🛡️ Forsvarstatistikk
+#### 🛡️ Defensive Statistics
 
-- Taklinger forsøkt/vunnet
-- Avskjæringer (interceptions)
-- Klaringer
-- Blokkeringer
-- Pressing
+- Tackles attempted/won
+- Interceptions
+- Clearances
+- Blocks
+- Pressures
 
-#### 🟨 Disiplin
+#### 🟨 Discipline
 
-- Foul begått/vunnet
-- Gule kort
-- Røde kort
+- Fouls committed/won
+- Yellow cards
+- Red cards
 
-#### 📍 Posisjonsdata
+#### 📍 Positional Data
 
-- Gjennomsnittlig posisjon (x,y koordinater)
-- Ballkontakter
-- Balltap
+- Average position (x,y coordinates)
+- Ball touches
+- Ball losses
 
-#### 📈 Per-kamp statistikk
+#### 📈 Per-Match Statistics
 
-- Pasninger per kamp
-- Skudd per kamp
-- Mål per kamp
-- Assists per kamp
+- Passes per match
+- Shots per match
+- Goals per match
+- Assists per match
 
-## 🎓 Pedagogisk forklaring
+## 🎓 Educational Explanation
 
-### Problemet:
+### The Problem:
 
-Fotballanalyse krever detaljerte spillerstatistikker for å forstå prestasjoner og sammenligne spillere.
+Football analysis requires detailed player statistics to understand performance and compare players.
 
-### Løsningen:
+### The Solution:
 
-1. **Datainnhenting**: Bruker StatsBomb API for å hente event-data
-2. **Aggregering**: Konverterer rå events til meningsfulle statistikker
-3. **Kategorisering**: Organiserer statistikker i logiske grupper
-4. **Normalisering**: Beregner per-kamp og prosentuelle mål
+1. **Data Fetching**: Uses StatsBomb API to retrieve event data
+2. **Aggregation**: Converts raw events into meaningful statistics
+3. **Categorization**: Organizes statistics into logical groups
+4. **Normalization**: Calculates per-match and percentage metrics
 
-### Relevans for CIT4620:
+### Relevance for CIT4620:
 
-- **Feature Engineering**: Konvertering av rå data til ML-features
-- **Data Preprocessing**: Rensing og strukturering av store datasett
-- **Statistical Analysis**: Beregning av avledede mål og sammendrag
-- **Big Data**: Håndtering av ~760,000 events fra 380 kamper
+- **Feature Engineering**: Converting raw data into ML features
+- **Data Preprocessing**: Cleaning and structuring large datasets
+- **Statistical Analysis**: Calculating derived metrics and summaries
+- **Big Data**: Handling ~760,000 events from 380 matches
 
-## 🔍 Eksempel på bruk
+## 🔍 Usage Example
 
 ```python
 import pandas as pd
 
-# Last inn spillerstatistikk
+# Load player statistics
 stats = pd.read_csv('data/pl_2015_2016_player_stats_simple_[timestamp].csv')
 
-# Finn toppscorere
+# Find top scorers
 top_scorers = stats.nlargest(10, 'goals_scored')
 print(top_scorers[['player_name', 'team', 'goals_scored', 'assists']])
 
-# Spillere med best pasningsprosent (min 1000 pasninger)
+# Players with best passing percentage (min 1000 passes)
 accurate_passers = stats[stats['passes_attempted'] >= 1000]
 best_passers = accurate_passers.nlargest(10, 'pass_completion_rate')
 
-# Mest kreative spillere
+# Most creative players
 creative = stats.nlargest(10, 'key_passes')
 ```
 
-## 📈 Eksempel på resultater
+## 📈 Example Results
 
-### Toppscorere (forventet):
+### Top Scorers (expected):
 
 1. **Harry Kane** - Tottenham
 2. **Sergio Agüero** - Manchester City
-3. **Jamie Vardy** - Leicester City (mesterskapssesongen!)
+3. **Jamie Vardy** - Leicester City (championship season!)
 4. **Romelu Lukaku** - Everton
 5. **Olivier Giroud** - Arsenal
 
-### Beste pasningsprosent:
+### Best Passing Percentage:
 
-- Sentrale forsvarere og defensive midtbanespillere
-- Keepere (korte pasninger)
+- Central defenders and defensive midfielders
+- Goalkeepers (short passes)
 
-### Mest kreative spillere:
+### Most Creative Players:
 
-- Offensive midtbanespillere
-- Kantspillere med mange innlegg
+- Attacking midfielders
+- Wingers with many crosses
 
-## 🚨 Tips og advarsler
+## 🚨 Tips and Warnings
 
 ### Performance:
 
-- Full analyse tar lang tid - vær tålmodig!
-- Test først med `test_player_stats.py`
-- Scriptene bruker API rate limiting for å unngå blokkering
+- Full analysis takes a long time - be patient!
+- Test first with `test_player_stats.py`
+- Scripts use API rate limiting to avoid blocking
 
-### Datakvalitet:
+### Data Quality:
 
-- StatsBomb data er svært detaljert og nøyaktig
-- Noen kamper kan mangle visse event-typer
-- Posisjondata er i StatsBomb sitt koordinatsystem (120x80)
+- StatsBomb data is very detailed and accurate
+- Some matches may be missing certain event types
+- Position data is in StatsBomb's coordinate system (120x80)
 
-### Filstørrelser:
+### File Sizes:
 
-- Full statistikk: ~2-5 MB
-- Rådata (hvis hentet): ~200-500 MB
+- Full statistics: ~2-5 MB
+- Raw data (if fetched): ~200-500 MB
 
-## 🔧 Feilsøking
+## 🔧 Troubleshooting
 
-### Vanlige problemer:
+### Common Problems:
 
-1. **Import error**: Installer `statsbombpy` med `pip install statsbombpy`
-2. **API timeout**: Prøv igjen senere, eller øk pause-tiden i scriptet
-3. **Manglende data**: Noen kamper kan ha begrenset data tilgjengelig
+1. **Import error**: Install `statsbombpy` with `pip install statsbombpy`
+2. **API timeout**: Try again later, or increase the pause time in the script
+3. **Missing data**: Some matches may have limited data available
 
 ### Debug:
 
 ```bash
 python3 -c "import statsbombpy; print('StatsBomb OK')"
-python3 quick_fetch_example.py  # Test API-tilgang
+python3 quick_fetch_example.py  # Test API access
 ```
 
-## 📚 Videre utvikling
+## 📚 Further Development
 
-### Mulige utvidelser:
+### Possible Extensions:
 
-- Heatmaps basert på posisjonsdata
-- Spillersammenligning og clustering
-- Prediktive modeller for spillerprestasjon
-- Integrasjon med andre sesonger/ligaer
+- Heatmaps based on positional data
+- Player comparison and clustering
+- Predictive models for player performance
+- Integration with other seasons/leagues
 
-### For CIT4620 prosjekter:
+### For CIT4620 Projects:
 
-- Bruk statistikken som features for ML-modeller
-- Implementer similarity search basert på spillerstiler
-- Lag neural networks for spillerprestasjon prediksjon
+- Use statistics as features for ML models
+- Implement similarity search based on player styles
+- Create neural networks for player performance prediction
 
 ---
 
-**Laget av AI Assistant for CIT4620 - Evolutionary AI and Robotics**  
+**Created by AI Assistant for CIT4620 - Evolutionary AI and Robotics**  
 _OsloMet - September 2025_
